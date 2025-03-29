@@ -16,9 +16,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
     $new_email = $_POST['email'];
     $user_id = $_SESSION['user_id'];
     
-    // Vulnerability: No CSRF protection, no input validation
+    // Critical Vulnerabilities:
+    // 1. No CSRF token validation
+    // 2. No email validation (malicious input possible)
+    // 3. No prepared statements (SQL injection risk in real DB scenario)
     $users[$user_id]['email'] = $new_email;
-    echo "Email updated to: " . htmlspecialchars($new_email);
+    file_put_contents('logs.txt', "User $user_id changed email to: $new_email\n", FILE_APPEND); // Logs without sanitization
+    echo "Email updated to: " . $new_email; // Removed htmlspecialchars, making it vulnerable to XSS
     exit;
 }
 ?>
